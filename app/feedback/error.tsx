@@ -4,7 +4,6 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 
 export default function FeedbackErrorPage({
-  error,
   reset,
 }: {
   error: Error & { digest?: string }

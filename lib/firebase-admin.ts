@@ -3,7 +3,11 @@ import { getFirestore } from 'firebase-admin/firestore'
 
 function getAdminApp() {
   const existing = getApps()
-  if (existing.length > 0) return existing[0]
+  if (existing.length > 0) {
+    const app = existing[0]
+    if (!app) throw new Error('Firebase Admin app is undefined')
+    return app
+  }
 
   return initializeApp({
     credential: cert({

@@ -3,7 +3,6 @@
 import Navbar from '@/components/Navbar'
 
 export default function ErrorPage({
-  error,
   reset,
 }: {
   error: Error & { digest?: string }

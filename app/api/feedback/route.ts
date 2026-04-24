@@ -47,9 +47,10 @@ export async function POST(req: NextRequest) {
     const gender     = (fd.get('gender') as string) ?? ''
     const yearOfStudy = (fd.get('yearOfStudy') as string) ?? ''
     const visitReason = (fd.get('visitReason') as string) ?? ''
-    const rawRating  = fd.get('rating')
-    const rawText    = fd.get('text')
-    const image      = fd.get('image') as File | null
+    const rawRating = fd.get('rating')
+    const rawText   = fd.get('text')
+    const image     = fd.get('image')
+    const imageFile = image instanceof File ? image : null
 
     // Required personal details
     if (!name)  return NextResponse.json({ error: 'Full name is required.' }, { status: 400 })
@@ -75,18 +76,18 @@ export async function POST(req: NextRequest) {
 
     // Image upload
     let imageUrl: string | null = null
-    if (image && image.size > 0) {
-      if (!ALLOWED_IMAGE_TYPES.includes(image.type))
+    if (imageFile && imageFile.size > 0) {
+      if (!ALLOWED_IMAGE_TYPES.includes(imageFile.type))
         return NextResponse.json({ error: 'Only JPEG, PNG, WebP, and GIF images are allowed.' }, { status: 400 })
-      if (image.size > MAX_IMAGE_SIZE)
+      if (imageFile.size > MAX_IMAGE_SIZE)
         return NextResponse.json({ error: 'Image must be under 5 MB.' }, { status: 400 })
 
-      const buffer   = Buffer.from(await image.arrayBuffer())
-      const ext      = image.name.split('.').pop() ?? 'jpg'
+      const buffer   = Buffer.from(await imageFile.arrayBuffer())
+      const ext      = imageFile.name.split('.').pop() ?? 'jpg'
       const filename = `feedback-images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const bucket   = getStorage().bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!)
       const file     = bucket.file(filename)
-      await file.save(buffer, { contentType: image.type, public: true })
+      await file.save(buffer, { contentType: imageFile.type, public: true })
       imageUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`
     }
 
