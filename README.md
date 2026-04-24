@@ -1,73 +1,31 @@
 # MindSpace — College Therapist Feedback Platform
 
-A modern, minimalist, fully responsive feedback platform for college counseling sessions. Built with Next.js 14, TypeScript, Tailwind CSS, and MongoDB.
+A modern, fully responsive feedback platform for college counseling sessions. Students can submit detailed session feedback which is securely stored in Firebase Firestore and viewable by authorised staff.
 
 ---
 
 ## Features
 
-- **Landing page** — calming hero, trust badges, feature grid, CTA
-- **Feedback form** — anonymous text, 1–5 star rating, optional image upload (drag & drop)
-- **Admin dashboard** — protected login, analytics charts (ratings + sentiment), filters (rating / keyword / date range), pagination
-- **API routes** — POST `/api/feedback`, GET `/api/admin/feedback`
-- **Privacy-first** — no user identification, anonymous by design
-
-## Color Palette
-
-| Token         | Hex       | Usage                        |
-|---------------|-----------|------------------------------|
-| `sage-500`    | `#4f7f4f` | Primary buttons, accents     |
-| `sage-50`     | `#f4f7f4` | Backgrounds, badges          |
-| `lavender-50` | `#f5f3ff` | Privacy notice background    |
-| `cream`       | `#fdfcf8` | Page background              |
-| Amber         | `#f59e0b` | Star ratings, neutral badge  |
+- **Landing page** — hero section, how-it-works steps, feature grid, CTA
+- **Feedback form** — star rating (0.5 increments), contextual tag chips, optional written feedback, personal details (name, email, college ID, contact, age, gender, year of study, visit reason), optional photo upload
+- **Firebase backend** — all submissions stored in Firestore via the Admin SDK; images stored in Firebase Storage
+- **Google Analytics** — integrated via `next/script` with `afterInteractive` strategy
+- **Privacy-first** — details visible only to authorised counseling staff
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                        |
-|------------|-----------------------------------|
-| Framework  | Next.js 14 (App Router)           |
-| Language   | TypeScript                        |
-| Styling    | Tailwind CSS                      |
-| Database   | MongoDB + Mongoose                |
-| Charts     | Recharts                          |
-| Upload     | react-dropzone + fs (local)       |
-
----
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+
-- MongoDB (local or Atlas)
-
-### Installation
-
-```bash
-# 1. Install dependencies
-npm install
-
-# 2. Configure environment
-cp .env.local .env.local
-# Edit .env.local:
-#   MONGODB_URI=mongodb://localhost:27017/therapist-feedback
-#   ADMIN_SECRET=your-secret-key
-
-# 3. Run development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-### Pages
-
-| Route       | Description              |
-|-------------|--------------------------|
-| `/`         | Landing page             |
-| `/feedback` | Student feedback form    |
-| `/admin`    | Admin dashboard (secret) |
+| Layer       | Technology                          |
+|-------------|-------------------------------------|
+| Framework   | Next.js 15 (App Router)             |
+| Language    | TypeScript (strict mode)            |
+| Styling     | Tailwind CSS                        |
+| Database    | Firebase Firestore (Admin SDK)      |
+| Storage     | Firebase Storage                    |
+| Analytics   | Google Analytics (gtag.js)          |
+| Font        | Geist (via `geist` package)         |
+| Deployment  | Vercel                              |
 
 ---
 
@@ -76,42 +34,155 @@ Open [http://localhost:3000](http://localhost:3000)
 ```
 therapist-feedback/
 ├── app/
-│   ├── page.tsx                    # Landing page
-│   ├── feedback/page.tsx           # Feedback form
-│   ├── admin/page.tsx              # Admin dashboard
-│   ├── api/
-│   │   ├── feedback/route.ts       # POST — submit feedback
-│   │   └── admin/feedback/route.ts # GET  — fetch + analytics
-│   ├── layout.tsx
-│   └── globals.css
+│   ├── page.tsx                  # Landing page
+│   ├── layout.tsx                # Root layout + Google Analytics
+│   ├── globals.css               # Tailwind base + custom utilities
+│   ├── error.tsx                 # Root error boundary
+│   ├── loading.tsx               # Root loading state
+│   ├── feedback/
+│   │   ├── page.tsx              # Feedback submission form
+│   │   ├── error.tsx             # Feedback error boundary
+│   │   └── loading.tsx           # Feedback loading state
+│   └── api/
+│       └── feedback/
+│           └── route.ts          # POST /api/feedback — validates & saves to Firestore
 ├── components/
-│   ├── Navbar.tsx
-│   ├── RatingStars.tsx
-│   ├── ImageUpload.tsx
-│   ├── PrivacyBadge.tsx
-│   ├── FeedbackCard.tsx
-│   └── AnalyticsCharts.tsx
+│   ├── Navbar.tsx                # Sticky navigation bar
+│   └── RatingStars.tsx           # Interactive half-star rating component
 ├── lib/
-│   └── db.ts                       # MongoDB connection (pooled)
-├── models/
-│   └── Feedback.ts                 # Mongoose schema
-└── public/uploads/                 # Uploaded images
+│   └── firebase-admin.ts         # Firebase Admin SDK initialisation + getAdminDB()
+├── .env.local                    # Environment variables (never committed)
+├── .env.example                  # Template showing required env vars
+├── next.config.js                # Next.js config — serverExternalPackages, headers
+├── vercel.json                   # Vercel config — API function maxDuration
+├── tailwind.config.js            # Tailwind theme — sage color palette, custom shadows
+└── tsconfig.json                 # TypeScript strict config
 ```
 
 ---
 
-## Scalability Notes
+## Getting Started
 
-- MongoDB connection uses **pooling** (`maxPoolSize: 10`) and a global cache to survive hot-reloads
-- API routes are **stateless** — deploy behind a load balancer for 5000+ concurrent users
-- For production image uploads, replace `fs` writes with **AWS S3** or **Cloudinary**
-- Add **Redis** caching on the admin analytics aggregation for high-traffic scenarios
+### Prerequisites
+- Node.js 18+
+- A Firebase project with **Firestore** and **Storage** enabled
+
+### 1. Clone and install
+
+```bash
+git clone <your-repo-url>
+cd therapist-feedback
+npm install
+```
+
+### 2. Configure environment variables
+
+Copy the example file and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and paste your keys — see comments in the file for where to find each value.
+
+**Client-side keys** — Firebase Console → Project Settings → General → Your apps → Web app:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+```
+
+**Server-side keys** — Firebase Console → Project Settings → Service Accounts → Generate new private key:
+```
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=       # keep the \n characters in the key
+```
+
+### 3. Run the development server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Pages & Routes
+
+| Route            | Type          | Description                        |
+|------------------|---------------|------------------------------------|
+| `/`              | Server page   | Landing page                       |
+| `/feedback`      | Client page   | Feedback submission form           |
+| `POST /api/feedback` | API route | Validates input, saves to Firestore |
+
+---
+
+## Backend Flow
+
+```
+Browser (feedback form)
+        │
+        │  POST /api/feedback  (multipart/form-data)
+        ▼
+app/api/feedback/route.ts
+        │  — validates all fields
+        │  — uploads image to Firebase Storage (if provided)
+        │  — derives sentiment from rating
+        ▼
+lib/firebase-admin.ts
+        │  — initialises Admin SDK using .env.local credentials
+        ▼
+Firebase Firestore  →  feedback collection
+Firebase Storage    →  feedback-images/ folder
+        │
+        ▼
+{ success: true, id: "..." }  →  browser shows success screen
+```
+
+## Firestore Document Schema
+
+Each submission creates one document in the `feedback` collection:
+
+| Field         | Type      | Description                        |
+|---------------|-----------|------------------------------------|
+| `name`        | string    | Full name                          |
+| `email`       | string    | Email address                      |
+| `collegeId`   | string    | Student college ID                 |
+| `contact`     | string \| null | Phone number (optional)       |
+| `ageRange`    | string    | e.g. `18-20`                       |
+| `gender`      | string    | e.g. `Female`                      |
+| `yearOfStudy` | string    | e.g. `Second Year`                 |
+| `visitReason` | string    | e.g. `Individual Therapy`          |
+| `rating`      | number    | 0.5 – 5 in 0.5 increments         |
+| `text`        | string \| null | Written feedback (optional)   |
+| `tags`        | string[]  | Selected tag chips                 |
+| `sentiment`   | string    | `positive` / `neutral` / `negative`|
+| `imageUrl`    | string \| null | Firebase Storage URL (optional)|
+| `createdAt`   | Timestamp | Firestore server timestamp         |
+
+---
+
+## Deployment (Vercel)
+
+1. Push your code to GitHub
+2. Import the repo in [vercel.com](https://vercel.com)
+3. Add all environment variables from `.env.local` in **Vercel → Settings → Environment Variables**
+4. Deploy
+
+> The `FIREBASE_PRIVATE_KEY` must be added exactly as-is including the `\n` characters. Do not wrap it in extra quotes in the Vercel dashboard.
+
+---
 
 ## Production Checklist
 
-- [ ] Set `MONGODB_URI` to a MongoDB Atlas cluster
-- [ ] Set a strong `ADMIN_SECRET`
-- [ ] Replace local file uploads with S3/Cloudinary
-- [ ] Add rate limiting (e.g. `@upstash/ratelimit`) on `/api/feedback`
-- [ ] Deploy to Vercel or a Node.js server
-#
+- [ ] All environment variables set in Vercel dashboard
+- [ ] Firestore rules restrict writes to server-side only
+- [ ] Firebase Storage rules restrict public read to `feedback-images/` only
+- [ ] `.env.local` is in `.gitignore` (already configured)
+- [ ] Rotate the Firebase service account key if it was ever exposed
