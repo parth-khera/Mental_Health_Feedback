@@ -23,22 +23,22 @@ const SENTIMENT_LABELS: Record<string, string> = {
   negative: 'Negative',
 }
 
-function CustomBarTooltip({ active, payload }: any) {
+function CustomBarTooltip({ active, payload }: { active?: boolean; payload?: { value: number; payload: { rating: number } }[] }) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-white rounded-2xl shadow-large border border-gray-100 px-4 py-3">
-      <p className="text-xs text-gray-500 mb-0.5">Rating {payload[0].payload.rating} ★</p>
-      <p className="text-lg font-semibold text-gray-900">{payload[0].value} <span className="text-sm font-normal text-gray-400">responses</span></p>
+      <p className="text-xs text-gray-500 mb-0.5">Rating {payload[0]?.payload.rating} ★</p>
+      <p className="text-lg font-semibold text-gray-900">{payload[0]?.value} <span className="text-sm font-normal text-gray-400">responses</span></p>
     </div>
   )
 }
 
-function CustomPieTooltip({ active, payload }: any) {
+function CustomPieTooltip({ active, payload }: { active?: boolean; payload?: { name: string; value: number }[] }) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-white rounded-2xl shadow-large border border-gray-100 px-4 py-3">
-      <p className="text-xs text-gray-500 mb-0.5">{SENTIMENT_LABELS[payload[0].name] ?? payload[0].name}</p>
-      <p className="text-lg font-semibold text-gray-900">{payload[0].value} <span className="text-sm font-normal text-gray-400">responses</span></p>
+      <p className="text-xs text-gray-500 mb-0.5">{SENTIMENT_LABELS[payload[0]?.name ?? ''] ?? payload[0]?.name}</p>
+      <p className="text-lg font-semibold text-gray-900">{payload[0]?.value} <span className="text-sm font-normal text-gray-400">responses</span></p>
     </div>
   )
 }

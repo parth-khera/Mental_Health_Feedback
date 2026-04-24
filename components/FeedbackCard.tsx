@@ -70,11 +70,13 @@ export default function FeedbackCard({
                 <svg key={star} viewBox="0 0 24 24" className="w-4 h-4 transition-transform duration-150">
                   {state === 'half' ? (
                     <>
+                      <defs>
+                        <clipPath id={`card-half-${star}`}>
+                          <rect x="0" y="0" width="12" height="24" />
+                        </clipPath>
+                      </defs>
                       <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
                         fill="#e5e7eb" />
-                      <clipPath id={`card-half-${star}`}>
-                        <rect x="0" y="0" width="12" height="24" />
-                      </clipPath>
                       <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
                         fill={color}
                         clipPath={`url(#card-half-${star})`}
@@ -102,32 +104,12 @@ export default function FeedbackCard({
         <p className="text-sm text-gray-700 leading-relaxed">{text}</p>
 
         {/* Personal Details */}
-        {ageRange || gender || yearOfStudy || visitReason && (
+        {(ageRange || gender || yearOfStudy || visitReason) && (
           <div className="text-xs text-gray-500 space-y-1">
-            {ageRange && <span className="flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v4m0 0v4m0-8a4 4 0 110 8z" />
-              </svg>
-              {ageRange}
-            </span>}
-            {gender && <span className="flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 5l5 5m0-5l-5 5m5-5V6a2 2 0 10-4 0v1m8 2a2 2 0 11-4 0m-2 4a2 2 0 10-4 0m6-6a2 2 0 11-4 0m4 1v2a2 2 0 01-4 0" />
-              </svg>
-              {gender}
-            </span>}
-            {yearOfStudy && <span className="flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3h7a4 4 0 000 8z" />
-              </svg>
-              {yearOfStudy}
-            </span>}
-            {visitReason && <span className="flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 011.946-.806 3 3 0 014.433 2.982c-.105.213-.18.443-.227.682a12.084 12.084 0 01-.005.204M7.5 6.75a3 3 0 110-5.996M15 7.5a9 9 0 01-9 9 9 9 0 019-9zm-2.5 7.5a3 3 0 100-5.996" />
-              </svg>
-              {visitReason}
-            </span>}
+            {ageRange && <span className="flex items-center gap-1"><span>🎂</span>{ageRange}</span>}
+            {gender && <span className="flex items-center gap-1"><span>👤</span>{gender}</span>}
+            {yearOfStudy && <span className="flex items-center gap-1"><span>🎓</span>{yearOfStudy}</span>}
+            {visitReason && <span className="flex items-center gap-1"><span>🏥</span>{visitReason}</span>}
           </div>
         )}
 

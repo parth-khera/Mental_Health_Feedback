@@ -32,7 +32,7 @@ function parseTags(raw: FormDataEntryValue | null): string[] {
       .filter((t): t is string => typeof t === 'string')
       .map(t => t.slice(0, 50))
       .slice(0, MAX_TAGS)
-  } catch { return [] }
+  } catch (_) { return [] }
 }
 
 export async function POST(req: NextRequest) {
