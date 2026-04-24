@@ -4,16 +4,16 @@ import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://mindspace-feedback.vercel.app'),
+  metadataBase: new URL('https://klinixy-a-medical-therepy-website.vercel.app'),
   title: {
-    default: 'MindSpace — Anonymous Therapist Feedback',
-    template: '%s | MindSpace',
+    default: 'Klinixy — Medical Therapy Feedback',
+    template: '%s | Klinixy',
   },
-  description: 'Share your counseling session experience anonymously. Safe, secure, and non-judgmental feedback platform for students.',
-  keywords: ['anonymous feedback', 'therapist feedback', 'counseling review', 'student wellbeing', 'mental health', 'anonymous survey'],
-  authors: [{ name: 'MindSpace' }],
-  creator: 'MindSpace',
-  publisher: 'MindSpace',
+  description: 'Share your Klinixy therapy session experience. Help us improve our medical therapy services with your honest, confidential feedback.',
+  keywords: ['Klinixy', 'medical therapy', 'therapy feedback', 'patient feedback', 'mental health', 'holistic care', 'therapy review'],
+  authors: [{ name: 'Klinixy' }],
+  creator: 'Klinixy',
+  publisher: 'Klinixy',
   robots: {
     index: true,
     follow: true,
@@ -28,23 +28,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://mindspace-feedback.vercel.app',
-    siteName: 'MindSpace',
-    title: 'MindSpace — Anonymous Therapist Feedback',
-    description: 'Share your counseling session experience anonymously. Your feedback helps improve student wellbeing services.',
+    url: 'https://klinixy-a-medical-therepy-website.vercel.app',
+    siteName: 'Klinixy',
+    title: 'Klinixy — Medical Therapy Feedback',
+    description: 'Share your Klinixy therapy session experience. Help us improve our medical therapy services.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'MindSpace - Anonymous Therapist Feedback',
+        alt: 'Klinixy - Medical Therapy Feedback',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MindSpace — Anonymous Therapist Feedback',
-    description: 'Share your counseling session experience anonymously.',
+    title: 'Klinixy — Medical Therapy Feedback',
+    description: 'Share your Klinixy therapy session experience. Confidential and secure.',
     images: ['/og-image.png'],
   },
   verification: {

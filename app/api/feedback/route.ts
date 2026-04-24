@@ -111,7 +111,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id: ref.id }, { status: 201 })
   } catch (err) {
-    console.error('[POST /api/feedback]', err)
-    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[POST /api/feedback]', message)
+    return NextResponse.json(
+      { error: process.env.NODE_ENV === 'development' ? message : 'Something went wrong. Please try again.' },
+      { status: 500 }
+    )
   }
 }

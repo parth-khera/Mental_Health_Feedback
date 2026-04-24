@@ -118,9 +118,9 @@ export default function FeedbackPage() {
               </div>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Review posted!</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Thank you for your feedback!</h2>
               <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-                Your anonymous feedback has been shared. Thank you for helping improve student wellbeing.
+                Your feedback has been submitted to Klinixy. It helps us improve the quality of care for every patient.
               </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -158,12 +158,12 @@ export default function FeedbackPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 leading-tight">Anonymous Student</p>
+                  <p className="text-sm font-semibold text-gray-900 leading-tight">Klinixy Patient Feedback</p>
                   <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                     </svg>
-                    Your identity is never shared
+                    Reviewed only by authorised Klinixy staff
                   </p>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function FeedbackPage() {
               {/* ── Giant Stars — exactly like Google Maps ── */}
               <div className="flex flex-col items-center gap-1 py-2">
                 <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-2">
-                  Rate your session
+                  Rate your Klinixy session
                 </p>
                 <RatingStars value={rating} onChange={handleRating} size="lg" />
               </div>
@@ -220,7 +220,7 @@ export default function FeedbackPage() {
                     focus:border-[#1a73e8] focus:bg-white focus:ring-2 focus:ring-[#1a73e8]/10
                     transition-all duration-200 leading-relaxed"
                   rows={4}
-                  placeholder="Share details of your experience at this session (optional)"
+                  placeholder="Tell us about your therapy experience at Klinixy (optional)"
                   value={text}
                   onChange={e => setText(e.target.value)}
                   maxLength={charLimit}
@@ -439,7 +439,7 @@ export default function FeedbackPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
             </svg>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Your details are kept <strong className="text-gray-600">strictly confidential</strong>. Only authorised counseling staff can access your submission.
+              Your details are kept <strong className="text-gray-600">strictly confidential</strong>. Only authorised Klinixy medical staff can access your submission.
             </p>
           </div>
         </div>

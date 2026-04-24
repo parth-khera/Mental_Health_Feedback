@@ -1,11 +1,9 @@
-import { initializeApp, getApps, cert, App } from 'firebase-admin/app'
+import { initializeApp, getApps, cert } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
-let adminApp: App | undefined
-
-function getAdminApp(): App {
+function getAdminApp() {
   const existing = getApps()
-  if (existing.length > 0 && existing[0]) return existing[0]
+  if (existing.length > 0) return existing[0]
 
   return initializeApp({
     credential: cert({
@@ -18,6 +16,5 @@ function getAdminApp(): App {
 }
 
 export function getAdminDB() {
-  if (!adminApp) adminApp = getAdminApp()
-  return getFirestore(adminApp)
+  return getFirestore(getAdminApp())
 }
