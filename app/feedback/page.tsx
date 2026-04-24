@@ -7,6 +7,12 @@ import Image from 'next/image'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
+// Personal detail options
+const AGE_RANGES = ['Under 18', '18-20', '21-23', '24-26', '27+'];
+const GENDER_OPTIONS = ['Female', 'Male', 'Non-binary', 'Prefer not to say', 'Other'];
+const YEAR_OF_STUDY = ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduate', 'Other'];
+const VISIT_REASONS = ['Individual Therapy', 'Group Therapy', 'Couples Therapy', 'Family Therapy', 'Crisis Intervention', 'Assessment/Evaluation', 'Other'];
+
 // Tag chips — Google Maps shows contextual tags based on star rating
 const TAG_MAP: Record<number, string[]> = {
   0.5: ['Very unsatisfied', 'Waste of time', 'Terrible experience', 'Completely unhelpful'],
@@ -30,9 +36,15 @@ export default function FeedbackPage() {
   const [status,     setStatus]     = useState<Status>('idle')
   const [errMsg,     setErrMsg]     = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+  
+  // Personal details
+  const [ageRange, setAgeRange] = useState<string>('')
+  const [gender, setGender] = useState<string>('')
+  const [yearOfStudy, setYearOfStudy] = useState<string>('')
+  const [visitReason, setVisitReason] = useState<string>('')
 
   const charLimit  = 500
-  const canSubmit  = rating >= 0.5 && status !== 'loading'
+  const canSubmit  = rating >= 0.5 && status !== 'loading' && ageRange && gender && yearOfStudy && visitReason
   const availTags  = rating >= 0.5 ? (TAG_MAP[rating] ?? TAG_MAP[Math.floor(rating)] ?? []) : []
 
   function handleRating(v: number) {
@@ -57,7 +69,7 @@ export default function FeedbackPage() {
     setPreviews(prev => prev.filter((_, idx) => idx !== i))
   }
 
-  async function handleSubmit() {
+    async function handleSubmit() {
     if (!canSubmit) return
     setStatus('loading')
     setErrMsg('')
@@ -66,6 +78,10 @@ export default function FeedbackPage() {
     fd.append('text',   text.trim())
     fd.append('rating', String(rating))
     fd.append('tags',   JSON.stringify(tags))
+    fd.append('ageRange', ageRange)
+    fd.append('gender', gender)
+    fd.append('yearOfStudy', yearOfStudy)
+    fd.append('visitReason', visitReason)
     if (images[0]) fd.append('image', images[0])
 
     try {
@@ -206,6 +222,70 @@ export default function FeedbackPage() {
                   <span className={`text-xs ${text.length > charLimit * 0.85 ? 'text-amber-500' : 'text-gray-300'}`}>
                     {text.length}/{charLimit}
                   </span>
+                </div>
+              </div>
+
+              {/* ── Personal Details ── */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Age Range</p>
+                  <select
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    value={ageRange}
+                    onChange={e => setAgeRange(e.target.value)}
+                  >
+                    <option value="">Select age range</option>
+                    {AGE_RANGES.map(range => (
+                      <option key={range} value={range}>
+                        {range}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Gender</p>
+                  <select
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    value={gender}
+                    onChange={e => setGender(e.target.value)}
+                  >
+                    <option value="">Select gender</option>
+                    {GENDER_OPTIONS.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Year of Study</p>
+                  <select
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    value={yearOfStudy}
+                    onChange={e => setYearOfStudy(e.target.value)}
+                  >
+                    <option value="">Select year of study</option>
+                    {YEAR_OF_STUDY.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Visit Reason</p>
+                  <select
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    value={visitReason}
+                    onChange={e => setVisitReason(e.target.value)}
+                  >
+                    <option value="">Select visit reason</option>
+                    {VISIT_REASONS.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

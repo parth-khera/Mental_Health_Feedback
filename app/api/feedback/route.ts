@@ -59,6 +59,10 @@ export async function POST(req: NextRequest) {
     const rawRating = formData.get('rating')
     const rawTags = formData.get('tags')
     const image = formData.get('image') as File | null
+    const ageRange = formData.get('ageRange') as string
+    const gender = formData.get('gender') as string
+    const yearOfStudy = formData.get('yearOfStudy') as string
+    const visitReason = formData.get('visitReason') as string
 
     // Validate text
     if (typeof rawText !== 'string' || !rawText.trim()) {
@@ -70,6 +74,28 @@ export async function POST(req: NextRequest) {
     const rating = parseFloat(rawRating as string)
     if (isNaN(rating) || rating < 0.5 || rating > 5) {
       return NextResponse.json({ error: 'Rating must be between 0.5 and 5.' }, { status: 400 })
+    }
+
+    // Validate personal details
+    const validAgeRanges = ['Under 18', '18-20', '21-23', '24-26', '27+'];
+    const validGenders = ['Female', 'Male', 'Non-binary', 'Prefer not to say', 'Other'];
+    const validYears = ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduate', 'Other'];
+    const validVisitReasons = ['Individual Therapy', 'Group Therapy', 'Couples Therapy', 'Family Therapy', 'Crisis Intervention', 'Assessment/Evaluation', 'Other'];
+
+    if (!ageRange || !validAgeRanges.includes(ageRange)) {
+      return NextResponse.json({ error: 'Valid age range is required.' }, { status: 400 })
+    }
+
+    if (!gender || !validGenders.includes(gender)) {
+      return NextResponse.json({ error: 'Valid gender selection is required.' }, { status: 400 })
+    }
+
+    if (!yearOfStudy || !validYears.includes(yearOfStudy)) {
+      return NextResponse.json({ error: 'Valid year of study is required.' }, { status: 400 })
+    }
+
+    if (!visitReason || !validVisitReasons.includes(visitReason)) {
+      return NextResponse.json({ error: 'Valid visit reason is required.' }, { status: 400 })
     }
 
     // Validate and sanitize tags
@@ -118,12 +144,16 @@ export async function POST(req: NextRequest) {
     // Save to Firestore
     const db  = getAdminDB()
     const ref = await db.collection('feedback').add({
-      text:      text.trim(),
+      text:       text.trim(),
       rating,
       tags,
-      sentiment: deriveSentiment(rating),
-      imageUrl:  imageUrl ?? null,
-      createdAt: FieldValue.serverTimestamp(),
+      sentiment:  deriveSentiment(rating),
+      imageUrl:   imageUrl ?? null,
+      ageRange,
+      gender,
+      yearOfStudy,
+      visitReason,
+      createdAt:  FieldValue.serverTimestamp(),
     })
 
     return NextResponse.json({ success: true, id: ref.id }, { status: 201 })

@@ -7,6 +7,10 @@ interface Props {
   sentiment?: string
   imageUrl?: string
   createdAt: string
+  ageRange?: string
+  gender?: string
+  yearOfStudy?: string
+  visitReason?: string
 }
 
 const sentimentConfig: Record<string, { label: string; color: string; bg: string; bar: string }> = {
@@ -32,7 +36,17 @@ function getStarState(star: number, rating: number) {
   return 'empty'
 }
 
-export default function FeedbackCard({ text, rating, sentiment, imageUrl, createdAt }: Props) {
+export default function FeedbackCard({ 
+  text, 
+  rating, 
+  sentiment, 
+  imageUrl, 
+  createdAt,
+  ageRange,
+  gender,
+  yearOfStudy,
+  visitReason 
+}: Props) {
   const s = sentiment ? sentimentConfig[sentiment] : null
   const color = getRatingColor(rating)
 
@@ -87,16 +101,46 @@ export default function FeedbackCard({ text, rating, sentiment, imageUrl, create
         {/* Text */}
         <p className="text-sm text-gray-700 leading-relaxed">{text}</p>
 
+        {/* Personal Details */}
+        {ageRange || gender || yearOfStudy || visitReason && (
+          <div className="text-xs text-gray-500 space-y-1">
+            {ageRange && <span className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v4m0 0v4m0-8a4 4 0 110 8z" />
+              </svg>
+              {ageRange}
+            </span>}
+            {gender && <span className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 5l5 5m0-5l-5 5m5-5V6a2 2 0 10-4 0v1m8 2a2 2 0 11-4 0m-2 4a2 2 0 10-4 0m6-6a2 2 0 11-4 0m4 1v2a2 2 0 01-4 0" />
+              </svg>
+              {gender}
+            </span>}
+            {yearOfStudy && <span className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3h7a4 4 0 000 8z" />
+              </svg>
+              {yearOfStudy}
+            </span>}
+            {visitReason && <span className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 011.946-.806 3 3 0 014.433 2.982c-.105.213-.18.443-.227.682a12.084 12.084 0 01-.005.204M7.5 6.75a3 3 0 110-5.996M15 7.5a9 9 0 01-9 9 9 9 0 019-9zm-2.5 7.5a3 3 0 100-5.996" />
+              </svg>
+              {visitReason}
+            </span>}
+          </div>
+        )}
+
         {/* Image */}
         {imageUrl && (
-          <div className="rounded-2xl overflow-hidden">
+          <div className="rounded-2xl overflow-hidden mt-3">
             <Image src={imageUrl} alt="Attached" width={400} height={200}
               className="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-1 border-t border-gray-50">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-50">
           <p className="text-xs text-gray-400">{format(new Date(createdAt), 'MMM d, yyyy · h:mm a')}</p>
           <div className="flex gap-0.5">
             {[1,2,3,4,5].map(s => (
