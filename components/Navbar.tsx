@@ -34,7 +34,6 @@ export default function Navbar() {
         {/* Nav links */}
         <div className="flex items-center gap-1">
           <NavLink href="/feedback" active={path === '/feedback'}>Share Feedback</NavLink>
-          <NavLink href="/admin" active={path.startsWith('/admin')}>Admin</NavLink>
         </div>
       </div>
     </nav>

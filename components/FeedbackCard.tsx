@@ -15,10 +15,26 @@ const sentimentConfig: Record<string, { label: string; color: string; bg: string
   negative: { label: 'Negative', color: 'text-red-600',     bg: 'bg-red-50 border-red-100',         bar: 'bg-red-400'     },
 }
 
-const ratingColors = ['', '#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e']
+// Color mapping for decimal ratings
+function getRatingColor(rating: number): string {
+  if (rating >= 4.5) return '#22c55e' // green
+  if (rating >= 3.5) return '#84cc16' // lime
+  if (rating >= 2.5) return '#eab308' // yellow
+  if (rating >= 1.5) return '#f97316' // orange
+  return '#ef4444' // red
+}
+
+// Fix: ensure proper color access with defaults
+
+function getStarState(star: number, rating: number) {
+  if (rating >= star) return 'full'
+  if (rating >= star - 0.5) return 'half'
+  return 'empty'
+}
 
 export default function FeedbackCard({ text, rating, sentiment, imageUrl, createdAt }: Props) {
   const s = sentiment ? sentimentConfig[sentiment] : null
+  const color = getRatingColor(rating)
 
   return (
     <div className="group bg-white rounded-3xl border border-gray-100/80
@@ -34,13 +50,30 @@ export default function FeedbackCard({ text, rating, sentiment, imageUrl, create
         <div className="flex items-start justify-between gap-4">
           {/* Stars */}
           <div className="flex gap-0.5 mt-0.5">
-            {[1,2,3,4,5].map(s => (
-              <svg key={s} viewBox="0 0 24 24" className="w-4 h-4 transition-transform duration-150"
-                style={{ fill: s <= rating ? ratingColors[rating] : '#e5e7eb',
-                         filter: s <= rating ? `drop-shadow(0 1px 3px ${ratingColors[rating]}50)` : 'none' }}>
-                <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-              </svg>
-            ))}
+            {[1,2,3,4,5].map((star) => {
+              const state = getStarState(star, rating)
+              return (
+                <svg key={star} viewBox="0 0 24 24" className="w-4 h-4 transition-transform duration-150">
+                  {state === 'half' ? (
+                    <>
+                      <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                        fill="#e5e7eb" />
+                      <clipPath id={`card-half-${star}`}>
+                        <rect x="0" y="0" width="12" height="24" />
+                      </clipPath>
+                      <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                        fill={color}
+                        clipPath={`url(#card-half-${star})`}
+                        style={{ filter: `drop-shadow(0 1px 3px ${color}50)` }} />
+                    </>
+                  ) : (
+                    <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                      fill={state === 'full' ? color : '#e5e7eb'}
+                      style={state === 'full' ? { filter: `drop-shadow(0 1px 3px ${color}50)` } : {}} />
+                  )}
+                </svg>
+              )
+            })}
           </div>
 
           {/* Sentiment badge */}
@@ -68,7 +101,7 @@ export default function FeedbackCard({ text, rating, sentiment, imageUrl, create
           <div className="flex gap-0.5">
             {[1,2,3,4,5].map(s => (
               <div key={s} className="h-1 w-4 rounded-full transition-all duration-300"
-                style={{ background: s <= rating ? ratingColors[rating] : '#f3f4f6' }} />
+                style={{ background: s <= rating ? color : '#f3f4f6' }} />
             ))}
           </div>
         </div>
