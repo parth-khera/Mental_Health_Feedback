@@ -7,7 +7,6 @@ import Image from 'next/image'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
-// Personal detail options
 const AGE_RANGES = ['Under 18', '18-20', '21-23', '24-26', '27+'];
 const GENDER_OPTIONS = ['Female', 'Male', 'Non-binary', 'Prefer not to say', 'Other'];
 const YEAR_OF_STUDY = ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduate', 'Other'];
@@ -38,13 +37,17 @@ export default function FeedbackPage() {
   const fileRef = useRef<HTMLInputElement>(null)
   
   // Personal details
-  const [ageRange, setAgeRange] = useState<string>('')
-  const [gender, setGender] = useState<string>('')
-  const [yearOfStudy, setYearOfStudy] = useState<string>('')
-  const [visitReason, setVisitReason] = useState<string>('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [collegeId, setCollegeId] = useState('')
+  const [contact, setContact] = useState('')
+  const [ageRange, setAgeRange] = useState('')
+  const [gender, setGender] = useState('')
+  const [yearOfStudy, setYearOfStudy] = useState('')
+  const [visitReason, setVisitReason] = useState('')
 
   const charLimit  = 500
-  const canSubmit  = rating >= 0.5 && status !== 'loading' && ageRange && gender && yearOfStudy && visitReason
+  const canSubmit  = rating >= 0.5 && status !== 'loading' && name.trim() && email.trim() && collegeId.trim() && ageRange && gender && yearOfStudy && visitReason
   const availTags  = rating >= 0.5 ? (TAG_MAP[rating] ?? TAG_MAP[Math.floor(rating)] ?? []) : []
 
   function handleRating(v: number) {
@@ -78,6 +81,10 @@ export default function FeedbackPage() {
     fd.append('text',   text.trim())
     fd.append('rating', String(rating))
     fd.append('tags',   JSON.stringify(tags))
+    fd.append('name', name.trim())
+    fd.append('email', email.trim())
+    fd.append('collegeId', collegeId.trim())
+    fd.append('contact', contact.trim())
     fd.append('ageRange', ageRange)
     fd.append('gender', gender)
     fd.append('yearOfStudy', yearOfStudy)
@@ -89,8 +96,8 @@ export default function FeedbackPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Submission failed.')
       setStatus('success')
-    } catch (err: any) {
-      setErrMsg(err.message)
+    } catch (err: unknown) {
+      setErrMsg(err instanceof Error ? err.message : 'Submission failed.')
       setStatus('error')
     }
   }
@@ -118,7 +125,7 @@ export default function FeedbackPage() {
             </div>
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => { setRating(0); setText(''); setTags([]); setImages([]); setPreviews([]); setStatus('idle') }}
+                onClick={() => { setRating(0); setText(''); setTags([]); setImages([]); setPreviews([]); setName(''); setEmail(''); setCollegeId(''); setContact(''); setAgeRange(''); setGender(''); setYearOfStudy(''); setVisitReason(''); setStatus('idle') }}
                 className="btn-primary w-full"
               >
                 Write another review
@@ -227,8 +234,54 @@ export default function FeedbackPage() {
 
               {/* ── Personal Details ── */}
               <div className="space-y-4">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest">Your Details</p>
+
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-500 font-medium">Age Range</p>
+                  <p className="text-xs text-gray-500 font-medium">Full Name <span className="text-red-400">*</span></p>
+                  <input
+                    type="text"
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Email Address <span className="text-red-400">*</span></p>
+                  <input
+                    type="email"
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">College ID <span className="text-red-400">*</span></p>
+                  <input
+                    type="text"
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    placeholder="e.g. STU2024001"
+                    value={collegeId}
+                    onChange={e => setCollegeId(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Contact Number <span className="text-gray-400 font-normal">(optional)</span></p>
+                  <input
+                    type="tel"
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                    placeholder="+91 XXXXX XXXXX"
+                    value={contact}
+                    onChange={e => setContact(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">Age Range <span className="text-red-400">*</span></p>
                   <select
                     className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
                     value={ageRange}
@@ -243,7 +296,7 @@ export default function FeedbackPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-500 font-medium">Gender</p>
+                  <p className="text-xs text-gray-500 font-medium">Gender <span className="text-red-400">*</span></p>
                   <select
                     className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
                     value={gender}
@@ -258,7 +311,7 @@ export default function FeedbackPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-500 font-medium">Year of Study</p>
+                  <p className="text-xs text-gray-500 font-medium">Year of Study <span className="text-red-400">*</span></p>
                   <select
                     className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
                     value={yearOfStudy}
@@ -273,7 +326,7 @@ export default function FeedbackPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-500 font-medium">Visit Reason</p>
+                  <p className="text-xs text-gray-500 font-medium">Visit Reason <span className="text-red-400">*</span></p>
                   <select
                     className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
                     value={visitReason}
@@ -346,7 +399,7 @@ export default function FeedbackPage() {
             <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
               {/* Privacy note */}
               <p className="text-[11px] text-gray-400 leading-tight max-w-[180px]">
-                Posting anonymously · visible only to counseling staff
+                Your details are kept confidential · visible only to counseling staff
               </p>
 
               <div className="flex items-center gap-2 shrink-0">
@@ -386,7 +439,7 @@ export default function FeedbackPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
             </svg>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Your review is <strong className="text-gray-600">completely anonymous</strong>. No name, student ID, or personal data is ever collected or stored. Only authorised counseling staff can read submissions.
+              Your details are kept <strong className="text-gray-600">strictly confidential</strong>. Only authorised counseling staff can access your submission.
             </p>
           </div>
         </div>

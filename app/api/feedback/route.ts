@@ -1,35 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminDB } from '@/lib/firebase-admin'
 import { getStorage } from 'firebase-admin/storage'
-import { getApps, initializeApp, cert } from 'firebase-admin/app'
 import { FieldValue } from 'firebase-admin/firestore'
 
-// Input validation constants
 const MAX_TEXT_LENGTH = 500
 const MAX_TAGS = 5
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 
-function ensureAdmin() {
-  if (!getApps().length) {
-    const projectId = process.env.FIREBASE_PROJECT_ID
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY
-
-    if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing Firebase admin credentials')
-    }
-
-    initializeApp({
-      credential: cert({
-        projectId,
-        clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n'),
-      }),
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-    })
-  }
-}
+const VALID_AGE_RANGES   = ['Under 18', '18-20', '21-23', '24-26', '27+']
+const VALID_GENDERS      = ['Female', 'Male', 'Non-binary', 'Prefer not to say', 'Other']
+const VALID_YEARS        = ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduate', 'Other']
+const VALID_VISIT_REASONS = ['Individual Therapy', 'Group Therapy', 'Couples Therapy', 'Family Therapy', 'Crisis Intervention', 'Assessment/Evaluation', 'Other']
 
 function deriveSentiment(rating: number): 'positive' | 'neutral' | 'negative' {
   if (rating >= 3.5) return 'positive'
@@ -37,106 +19,73 @@ function deriveSentiment(rating: number): 'positive' | 'neutral' | 'negative' {
   return 'negative'
 }
 
-function sanitizeText(text: string): string {
-  return text
-    .trim()
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .slice(0, MAX_TEXT_LENGTH)
+function sanitize(text: string, max = MAX_TEXT_LENGTH): string {
+  return text.trim().replace(/<[^>]*>/g, '').slice(0, max)
 }
 
-function validateTags(tags: unknown): string[] {
-  if (!Array.isArray(tags)) return []
-  return tags
-    .filter((tag): tag is string => typeof tag === 'string')
-    .map(tag => tag.slice(0, 50)) // Limit tag length
-    .slice(0, MAX_TAGS)
+function parseTags(raw: FormDataEntryValue | null): string[] {
+  if (!raw) return []
+  try {
+    const arr = JSON.parse(raw as string)
+    if (!Array.isArray(arr)) return []
+    return arr
+      .filter((t): t is string => typeof t === 'string')
+      .map(t => t.slice(0, 50))
+      .slice(0, MAX_TAGS)
+  } catch { return [] }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData()
-    const rawText = formData.get('text')
-    const rawRating = formData.get('rating')
-    const rawTags = formData.get('tags')
-    const image = formData.get('image') as File | null
-    const ageRange = formData.get('ageRange') as string
-    const gender = formData.get('gender') as string
-    const yearOfStudy = formData.get('yearOfStudy') as string
-    const visitReason = formData.get('visitReason') as string
+    const fd = await req.formData()
 
-    // Validate text
-    if (typeof rawText !== 'string' || !rawText.trim()) {
-      return NextResponse.json({ error: 'Feedback text is required.' }, { status: 400 })
-    }
-    const text = sanitizeText(rawText)
+    const name       = sanitize((fd.get('name') as string) ?? '', 100)
+    const email      = sanitize((fd.get('email') as string) ?? '', 200)
+    const collegeId  = sanitize((fd.get('collegeId') as string) ?? '', 50)
+    const contact    = sanitize((fd.get('contact') as string) ?? '', 20)
+    const ageRange   = (fd.get('ageRange') as string) ?? ''
+    const gender     = (fd.get('gender') as string) ?? ''
+    const yearOfStudy = (fd.get('yearOfStudy') as string) ?? ''
+    const visitReason = (fd.get('visitReason') as string) ?? ''
+    const rawRating  = fd.get('rating')
+    const rawText    = fd.get('text')
+    const image      = fd.get('image') as File | null
 
-    // Validate rating
-    const rating = parseFloat(rawRating as string)
-    if (isNaN(rating) || rating < 0.5 || rating > 5) {
-      return NextResponse.json({ error: 'Rating must be between 0.5 and 5.' }, { status: 400 })
-    }
-
-    // Validate personal details
-    const validAgeRanges = ['Under 18', '18-20', '21-23', '24-26', '27+'];
-    const validGenders = ['Female', 'Male', 'Non-binary', 'Prefer not to say', 'Other'];
-    const validYears = ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Graduate', 'Other'];
-    const validVisitReasons = ['Individual Therapy', 'Group Therapy', 'Couples Therapy', 'Family Therapy', 'Crisis Intervention', 'Assessment/Evaluation', 'Other'];
-
-    if (!ageRange || !validAgeRanges.includes(ageRange)) {
+    // Required personal details
+    if (!name)  return NextResponse.json({ error: 'Full name is required.' }, { status: 400 })
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return NextResponse.json({ error: 'A valid email address is required.' }, { status: 400 })
+    if (!collegeId) return NextResponse.json({ error: 'College ID is required.' }, { status: 400 })
+    if (!VALID_AGE_RANGES.includes(ageRange))
       return NextResponse.json({ error: 'Valid age range is required.' }, { status: 400 })
-    }
-
-    if (!gender || !validGenders.includes(gender)) {
+    if (!VALID_GENDERS.includes(gender))
       return NextResponse.json({ error: 'Valid gender selection is required.' }, { status: 400 })
-    }
-
-    if (!yearOfStudy || !validYears.includes(yearOfStudy)) {
+    if (!VALID_YEARS.includes(yearOfStudy))
       return NextResponse.json({ error: 'Valid year of study is required.' }, { status: 400 })
-    }
-
-    if (!visitReason || !validVisitReasons.includes(visitReason)) {
+    if (!VALID_VISIT_REASONS.includes(visitReason))
       return NextResponse.json({ error: 'Valid visit reason is required.' }, { status: 400 })
-    }
 
-    // Validate and sanitize tags
-    let tags: string[] = []
-    if (rawTags) {
-      try {
-        tags = validateTags(JSON.parse(rawTags as string))
-      } catch {
-        tags = []
-      }
-    }
+    // Rating
+    const rating = parseFloat(rawRating as string)
+    if (isNaN(rating) || rating < 0.5 || rating > 5)
+      return NextResponse.json({ error: 'Rating must be between 0.5 and 5.' }, { status: 400 })
 
-    ensureAdmin()
+    const text = sanitize((rawText as string) ?? '')
+    const tags = parseTags(fd.get('tags'))
 
-    let imageUrl: string | undefined
-
-    // Upload image to Firebase Storage
+    // Image upload
+    let imageUrl: string | null = null
     if (image && image.size > 0) {
-      // Validate image type
-      if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
-        return NextResponse.json(
-          { error: 'Invalid image type. Only JPEG, PNG, WebP, and GIF are allowed.' },
-          { status: 400 }
-        )
-      }
+      if (!ALLOWED_IMAGE_TYPES.includes(image.type))
+        return NextResponse.json({ error: 'Only JPEG, PNG, WebP, and GIF images are allowed.' }, { status: 400 })
+      if (image.size > MAX_IMAGE_SIZE)
+        return NextResponse.json({ error: 'Image must be under 5 MB.' }, { status: 400 })
 
-      // Validate image size
-      if (image.size > MAX_IMAGE_SIZE) {
-        return NextResponse.json(
-          { error: 'Image must be under 5 MB.' },
-          { status: 400 }
-        )
-      }
-
-      const bytes    = await image.arrayBuffer()
-      const buffer   = Buffer.from(bytes)
+      const buffer   = Buffer.from(await image.arrayBuffer())
       const ext      = image.name.split('.').pop() ?? 'jpg'
       const filename = `feedback-images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-
-      const bucket = getStorage().bucket()
-      const file   = bucket.file(filename)
+      const bucket   = getStorage().bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!)
+      const file     = bucket.file(filename)
       await file.save(buffer, { contentType: image.type, public: true })
       imageUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`
     }
@@ -144,16 +93,20 @@ export async function POST(req: NextRequest) {
     // Save to Firestore
     const db  = getAdminDB()
     const ref = await db.collection('feedback').add({
-      text:       text.trim(),
-      rating,
-      tags,
-      sentiment:  deriveSentiment(rating),
-      imageUrl:   imageUrl ?? null,
+      name,
+      email,
+      collegeId,
+      contact:     contact || null,
       ageRange,
       gender,
       yearOfStudy,
       visitReason,
-      createdAt:  FieldValue.serverTimestamp(),
+      text:        text || null,
+      rating,
+      tags,
+      sentiment:   deriveSentiment(rating),
+      imageUrl,
+      createdAt:   FieldValue.serverTimestamp(),
     })
 
     return NextResponse.json({ success: true, id: ref.id }, { status: 201 })
