@@ -3,28 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev":   "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "node server.js",
+    "lint":  "next lint"
   },
   "dependencies": {
-    "date-fns": "^3.6.0",
-    "firebase": "^12.12.1",
+    "date-fns":       "^3.6.0",
     "firebase-admin": "^13.8.0",
-    "geist": "^1.7.0",
-    "next": "15.5.15",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-dropzone": "^14.2.3",
-    "recharts": "^2.12.7"
+    "geist":          "^1.7.0",
+    "next":           "15.5.15",
+    "react":          "^18",
+    "react-dom":      "^18"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "@types/node":     "^20",
+    "@types/react":    "^18",
+    "@types/react-dom":"^18",
+    "autoprefixer":    "^10.0.1",
+    "postcss":         "^8",
+    "tailwindcss":     "^3.4.1",
+    "typescript":      "^5"
   }
 }
