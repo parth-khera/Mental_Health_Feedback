@@ -157,9 +157,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     console.error('[POST /api/feedback]', message)
-    return NextResponse.json(
-      { error: process.env.NODE_ENV === 'development' ? message : 'Something went wrong. Please try again.' },
-      { status: 500 }
-    )
+    // Always return real error so we can diagnose Vercel issues
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
