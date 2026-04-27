@@ -4,11 +4,22 @@
 
 @layer base {
   :root {
-    --sage-50: #f2f7f2;
-    --sage-100: #e0ece0;
-    --sage-400: #6a9e6a;
-    --sage-500: #4a7c59;
-    --sage-600: #3a6347;
+    --teal: #00E5E5;
+    --teal-dark: #00CCCC;
+    --teal-glow: rgba(0, 229, 229, 0.25);
+    --blue: #0076A3;
+    --blue-deep: #004A6B;
+    --blue-mid: #006385;
+    --slate: #0D1B2A;
+    --mid: #4A6070;
+    --silver: #E0E6EE;
+    --bg: #F5F4F0;
+    --white: #FFFFFF;
+    --green: #00C882;
+    --orange: #FFB400;
+    --header-grad: linear-gradient(135deg, #004F6E 0%, #00E5E5 55%, #0088B8 100%);
+    --teal-grad: linear-gradient(135deg, #00E5E5, #00CCCC);
+    --blue-grad: linear-gradient(145deg, #004A6B 0%, #00E5E5 50%, #007BAA 100%);
   }
 
   * { box-sizing: border-box; }
@@ -21,33 +32,34 @@
   }
 
   body {
-    @apply bg-[#f8faf8] text-gray-900 font-sans;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(74,124,89,0.08) 0%, transparent 60%);
+    @apply font-sans text-[#0D1B2A];
+    background-color: #F5F4F0;
+    background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,229,229,0.07) 0%, transparent 60%);
     min-height: 100vh;
   }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #c0d9c0; border-radius: 9999px; }
-  ::-webkit-scrollbar-thumb:hover { background: #8fbe8f; }
+  ::-webkit-scrollbar-thumb { background: #00CCCC; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00E5E5; }
 
-  ::selection { background: #c0d9c0; color: #1c3223; }
+  ::selection { background: #00E5E5; color: #004A6B; }
 }
 
 @layer components {
-  /* ── Buttons ── */
   .btn-primary {
     @apply relative inline-flex items-center justify-center gap-2
            px-6 py-3 rounded-2xl overflow-hidden
-           bg-sage-500 text-white font-medium text-sm
-           shadow-[0_1px_2px_rgba(0,0,0,0.12),0_4px_16px_rgba(74,124,89,0.25)]
-           hover:shadow-[0_2px_4px_rgba(0,0,0,0.12),0_8px_24px_rgba(74,124,89,0.35)]
+           text-white font-medium text-sm
            hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]
            transition-all duration-200 ease-out
            disabled:opacity-50 disabled:cursor-not-allowed
-           disabled:hover:translate-y-0 disabled:hover:shadow-none;
+           disabled:hover:translate-y-0;
+    background: var(--teal-grad);
+    box-shadow: 0 4px 24px var(--teal-glow), 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 8px 32px var(--teal-glow), 0 2px 4px rgba(0,0,0,0.12);
   }
   .btn-primary::before {
     content: '';
@@ -56,45 +68,52 @@
     background: transparent;
     transition: background-color 200ms;
   }
-  .btn-primary:hover::before { background: rgba(255,255,255,0.08); }
+  .btn-primary:hover::before { background: rgba(255,255,255,0.10); }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2
-           px-6 py-3 rounded-2xl
-           border border-sage-200/80 text-sage-700 font-medium text-sm bg-white/60
-           hover:bg-white hover:border-sage-300 hover:-translate-y-0.5
+           px-6 py-3 rounded-2xl font-medium text-sm bg-white/60
+           hover:bg-white hover:-translate-y-0.5
            active:translate-y-0 active:scale-[0.98]
-           transition-all duration-200 ease-out
-           shadow-[0_1px_3px_rgba(0,0,0,0.06)];
+           transition-all duration-200 ease-out;
+    border: 1px solid var(--silver);
+    color: var(--blue-deep);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
+  .btn-ghost:hover { border-color: var(--teal-dark); color: var(--blue); }
 
-  /* ── Cards ── */
   .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-3xl
-           border border-white/60
-           shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.06)]
-           p-6;
+    @apply bg-white/80 backdrop-blur-sm rounded-3xl p-6;
+    border: 1px solid var(--silver);
+    box-shadow: 0 1px 3px rgba(13,27,42,0.04), 0 8px 32px rgba(13,27,42,0.06);
   }
   .card-hover {
-    @apply card hover:-translate-y-1
-           hover:shadow-[0_4px_8px_rgba(0,0,0,0.06),0_16px_48px_rgba(0,0,0,0.1)]
-           transition-all duration-300 ease-out;
+    @apply card transition-all duration-300 ease-out;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0,76,111,0.08), 0 16px 48px rgba(0,76,111,0.12);
+    border-color: var(--teal-dark);
   }
 
-  /* ── Inputs ── */
   .input-base {
-    @apply w-full rounded-2xl border border-gray-200/80 bg-white/70 px-4 py-3 text-sm
-           placeholder:text-gray-400 outline-none
-           focus:border-sage-400 focus:ring-4 focus:ring-sage-100/60 focus:bg-white
-           transition-all duration-200
-           shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)];
+    @apply w-full rounded-2xl bg-white/70 px-4 py-3 text-sm
+           placeholder:text-[#4A6070] outline-none
+           transition-all duration-200;
+    border: 1px solid var(--silver);
+    color: var(--slate);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .input-base:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-glow), inset 0 1px 3px rgba(0,0,0,0.04);
+    background: white;
   }
 
   .badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium;
   }
 
-  /* ── Noise texture overlay ── */
   .noise::after {
     content: '';
     @apply absolute inset-0 rounded-[inherit] opacity-[0.03] pointer-events-none;
@@ -103,7 +122,6 @@
 }
 
 @layer utilities {
-  /* GPU-accelerated entrance animations */
   .animate-in {
     animation: animIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
@@ -126,7 +144,7 @@
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, #004A6B 25%, #00E5E5 50%, #0076A3 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
@@ -139,14 +157,12 @@
     animation: spin 3s linear infinite;
   }
 
-  /* Gradient text */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #4a7c59 0%, #6aab7a 50%, #3a6347 100%);
+    background-image: var(--header-grad);
   }
 
-  /* Glow effect */
-  .glow-sage {
-    box-shadow: 0 0 40px rgba(74,124,89,0.15), 0 0 80px rgba(74,124,89,0.08);
+  .glow-teal {
+    box-shadow: 0 0 40px rgba(0,229,229,0.20), 0 0 80px rgba(0,229,229,0.10);
   }
 }

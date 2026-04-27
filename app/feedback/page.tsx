@@ -92,11 +92,14 @@ export default function FeedbackPage() {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen flex items-center justify-center px-4 pt-16 bg-[#f8faf8]">
-          <div className="w-full max-w-sm bg-white rounded-3xl shadow-large p-8 text-center space-y-6 animate-in">
+        <main className="min-h-screen flex items-center justify-center px-4 pt-16" style={{ background: 'var(--bg)' }}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-8 text-center space-y-6 animate-in"
+            style={{ boxShadow: '0 8px 32px rgba(13,27,42,0.09)', border: '1px solid var(--silver)' }}>
             <div className="relative mx-auto w-20 h-20">
-              <div className="absolute inset-0 rounded-full bg-sage-100 animate-ping opacity-40" />
-              <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-sage-400 to-sage-600 flex items-center justify-center shadow-sage">
+              <div className="absolute inset-0 rounded-full animate-ping opacity-30"
+                style={{ background: 'var(--teal-glow)' }} />
+              <div className="relative w-20 h-20 rounded-full flex items-center justify-center"
+                style={{ background: 'var(--teal-grad)', boxShadow: '0 4px 24px var(--teal-glow)' }}>
                 <svg className="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
@@ -111,6 +114,7 @@ export default function FeedbackPage() {
             <div className="flex flex-col gap-2">
               <button onClick={resetForm} className="btn-primary w-full">Write another review</button>
               <Link href="/" className="btn-ghost w-full">Back to home</Link>
+
             </div>
           </div>
         </main>
@@ -122,21 +126,22 @@ export default function FeedbackPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#f8faf8] flex items-start justify-center px-4 pt-24 pb-16">
+      <main className="min-h-screen flex items-start justify-center px-4 pt-24 pb-16" style={{ background: 'var(--bg)' }}>
         <div className="w-full max-w-lg animate-in">
           <div className="bg-white rounded-3xl shadow-large overflow-hidden">
 
             {/* Header */}
-            <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+            <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid var(--silver)' }}>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sage-300 to-sage-500 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: 'var(--teal-grad)' }}>
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 leading-tight">Anonymous Student</p>
-                  <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                  <p className="text-sm font-semibold leading-tight" style={{ color: 'var(--slate)' }}>Anonymous Student</p>
+                  <p className="text-xs flex items-center gap-1 mt-0.5" style={{ color: 'var(--mid)' }}>
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                     </svg>
@@ -150,14 +155,14 @@ export default function FeedbackPage() {
 
               {/* Stars */}
               <div className="flex flex-col items-center gap-1 py-2">
-                <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-2">Rate your session</p>
+                <p className="text-xs uppercase tracking-widest font-medium mb-2" style={{ color: 'var(--mid)' }}>Rate your session</p>
                 <RatingStars value={rating} onChange={handleRating} size="lg" />
               </div>
 
               {/* Tag chips */}
               {availTags.length > 0 && (
                 <div className="space-y-2 animate-in">
-                  <p className="text-xs text-gray-500 font-medium">What best describes it?</p>
+                  <p className="text-xs font-medium" style={{ color: 'var(--mid)' }}>What best describes it?</p>
                   <div className="flex flex-wrap gap-2">
                     {availTags.map(tag => {
                       const selected = tags.includes(tag)
@@ -166,11 +171,17 @@ export default function FeedbackPage() {
                           key={tag}
                           type="button"
                           onClick={() => toggleTag(tag)}
-                          className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 ease-out hover:scale-[1.03] active:scale-[0.97] ${
-                            selected
-                              ? 'bg-[#1a73e8] border-[#1a73e8] text-white shadow-sm'
-                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
-                          }`}
+                          className="px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 ease-out hover:scale-[1.03] active:scale-[0.97]"
+                          style={selected ? {
+                            background: 'var(--teal-grad)',
+                            borderColor: 'var(--teal-dark)',
+                            color: 'white',
+                            boxShadow: '0 2px 8px var(--teal-glow)',
+                          } : {
+                            background: 'white',
+                            borderColor: 'var(--silver)',
+                            color: 'var(--mid)',
+                          }}
                         >
                           {selected && (
                             <svg className="inline w-3.5 h-3.5 mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -188,7 +199,7 @@ export default function FeedbackPage() {
               {/* Text area */}
               <div className="space-y-1">
                 <textarea
-                  className="w-full resize-none text-sm text-gray-800 placeholder:text-gray-400 bg-gray-50 rounded-2xl px-4 py-3.5 outline-none border border-transparent focus:border-[#1a73e8] focus:bg-white focus:ring-2 focus:ring-[#1a73e8]/10 transition-all duration-200 leading-relaxed"
+                  className="w-full resize-none text-sm rounded-2xl px-4 py-3.5 outline-none border transition-all duration-200 leading-relaxed input-base"
                   rows={4}
                   placeholder="Share details of your experience at this session (optional)"
                   value={text}
@@ -204,7 +215,7 @@ export default function FeedbackPage() {
 
               {/* Personal Details */}
               <div className="space-y-4">
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest">Your Details</p>
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--mid)' }}>Your Details</p>
 
                 {[
                   { label: 'Full Name',       type: 'text',  placeholder: 'Enter your full name',  value: name,      setter: setName,      required: true },
@@ -213,15 +224,15 @@ export default function FeedbackPage() {
                   { label: 'Contact Number',  type: 'tel',   placeholder: '+91 XXXXX XXXXX',        value: contact,   setter: setContact,   required: false },
                 ].map(({ label, type, placeholder, value, setter, required }) => (
                   <div key={label} className="space-y-2">
-                    <p className="text-xs text-gray-500 font-medium">
+                    <p className="text-xs font-medium" style={{ color: 'var(--mid)' }}>
                       {label} {required
-                        ? <span className="text-red-400">*</span>
-                        : <span className="text-gray-400 font-normal">(optional)</span>
+                        ? <span style={{ color: '#e53935' }}>*</span>
+                        : <span className="font-normal" style={{ color: 'var(--mid)' }}>(optional)</span>
                       }
                     </p>
                     <input
                       type={type}
-                      className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                      className="input-base"
                       placeholder={placeholder}
                       value={value}
                       onChange={e => setter(e.target.value)}
@@ -236,9 +247,9 @@ export default function FeedbackPage() {
                   { label: 'Visit Reason', value: visitReason, setter: setVisitReason, options: VISIT_REASONS,  placeholder: 'Select visit reason' },
                 ].map(({ label, value, setter, options, placeholder }) => (
                   <div key={label} className="space-y-2">
-                    <p className="text-xs text-gray-500 font-medium">{label} <span className="text-red-400">*</span></p>
+                    <p className="text-xs font-medium" style={{ color: 'var(--mid)' }}>{label} <span style={{ color: '#e53935' }}>*</span></p>
                     <select
-                      className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#1a73e8] focus:outline-none focus:ring-1 focus:ring-[#1a73e8]"
+                      className="input-base"
                       value={value}
                       onChange={e => setter(e.target.value)}
                     >
@@ -261,23 +272,30 @@ export default function FeedbackPage() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
-              <p className="text-[11px] text-gray-400 leading-tight max-w-[180px]">
+            <div className="px-6 py-4 flex items-center justify-between gap-3"
+              style={{ borderTop: '1px solid var(--silver)' }}>
+              <p className="text-[11px] leading-tight max-w-[180px]" style={{ color: 'var(--mid)' }}>
                 Your details are kept confidential · visible only to counseling staff
               </p>
               <div className="flex items-center gap-2 shrink-0">
-                <Link href="/" className="px-5 py-2 rounded-full text-sm font-medium text-[#1a73e8] hover:bg-blue-50 transition-colors duration-150">
+                <Link href="/" className="px-5 py-2 rounded-full text-sm font-medium transition-colors duration-150 hover:bg-[rgba(0,229,229,0.08)]"
+                  style={{ color: 'var(--blue)' }}>
                   Cancel
                 </Link>
                 <button
                   type="button"
                   onClick={handleSubmit}
                   disabled={!canSubmit}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                    canSubmit
-                      ? 'bg-[#1a73e8] text-white hover:bg-[#1557b0] shadow-sm hover:shadow-md active:scale-95'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className="px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95"
+                  style={canSubmit ? {
+                    background: 'var(--teal-grad)',
+                    color: 'white',
+                    boxShadow: '0 2px 8px var(--teal-glow)',
+                  } : {
+                    background: 'var(--silver)',
+                    color: 'var(--mid)',
+                    cursor: 'not-allowed',
+                  }}
                 >
                   {status === 'loading' ? (
                     <span className="flex items-center gap-2">
