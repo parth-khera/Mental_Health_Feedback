@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from '@/components/Navbar'
 
 const features = [
@@ -263,12 +264,7 @@ export default function HomePage() {
       <footer className="py-10 px-6" style={{ borderTop: '1px solid var(--silver)' }}>
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: 'var(--teal-grad)' }}>
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-              </svg>
-            </div>
+            <Image src="/logo.png" alt="MindSpace logo" width={24} height={24} className="rounded-lg" />
             <span className="text-sm font-medium" style={{ color: 'var(--slate)' }}>MindSpace</span>
           </div>
           <p className="text-xs" style={{ color: 'var(--mid)' }}>© {new Date().getFullYear()} · All feedback is anonymous and confidential</p>
